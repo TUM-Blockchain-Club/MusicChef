@@ -16,14 +16,14 @@ contract MyToken is ERC20, ERC20Permit, ERC20Votes, ERC20Capped {
     constructor(uint256 cap, uint256 _airdrop) ERC20("MusicChef", "MC") ERC20Capped(cap * (10 ** decimals())) ERC20Permit("MusicChef") {
         airdrop = _airdrop;
         // Mint the airdrop for the contract deployer
-        _mint(msg.sender, airdrop * (10 ** decimals()));
+        _mint(msg.sender, airdrop * 10e18);
     }
 
     // Mint the airdrop for the caller if they haven't already minted it
     function mintAirdrop() external {
         require(!hasMintedAirdrop[msg.sender], "Airdrop already minted for this address");
         
-        _mint(msg.sender, airdrop * (10 ** decimals()));
+        _mint(msg.sender, airdrop * 10e18);
         hasMintedAirdrop[msg.sender] = true;
     }
 

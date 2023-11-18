@@ -1,24 +1,40 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MusicNFT is ERC721URIStorage {
-    uint256 private _tokenIdCounter;
-    uint256 public constant TOTAL_SUPPLY = 1_000_000;
+contract MusicChef is ERC721, ERC721URIStorage, Ownable {
+    uint256 private _nextTokenId;
 
-    constructor() ERC721("MusicNFT", "MNFT") {}
+    constructor(address initialOwner)
+        ERC721("MusicChef", "MCH")
+        Ownable(initialOwner)
+    {}
 
-    function mintNFTs(address recipient, string memory tokenURI)
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 tokenId = _nextTokenId++;
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    // overrides
+    function tokenURI(uint256 tokenId)
         public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
     {
-        require(_tokenIdCounter < TOTAL_SUPPLY, "Max supply reached");
+        return super.tokenURI(tokenId);
+    }
 
-        for (uint i = 0; i < TOTAL_SUPPLY; i++) {
-            _tokenIdCounter += 1;
-            uint256 tokenId = _tokenIdCounter;
-            _mint(recipient, tokenId);
-            _setTokenURI(tokenId, tokenURI);
-        }
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }
