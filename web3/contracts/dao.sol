@@ -9,11 +9,13 @@ import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFractio
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
-
-
 contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction {
-    mapping(address => uint256) private _lockedBalances;
-    mapping(address => uint256) private _lastLocked;
+    mapping(address => uint256) private voteLockedBalances;
+    mapping(address => uint256) private voteLastLocked;
+
+    mapping(address => uint256) private proposalLockedBalances;
+    mapping(address => uint256) private proposalLastLocked;
+
     address public token_;
     
     constructor(IVotes _token)
@@ -31,44 +33,63 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
         return 100e18;
     }
 
-    // Deposit tokens for voting
-    function depositTokensForVoting(uint256 amount) public {
-        require(IERC20(token_).transferFrom(msg.sender, address(this), amount), "Token transfer failed");
-        _lockedBalances[msg.sender] += amount;
+    function propose(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        string memory description
+    ) public override returns (uint256) {
+        require(IERC20(token_).transferFrom(msg.sender, address(this), 5e18), "Token transfer failed");
+
+        // Store the locked amount for the proposer
+        proposalLockedBalances[msg.sender] += 5e18;
+        proposalLastLocked[msg.sender] = block.number;
+
+
+        return super.propose(targets, values, calldatas, description);
     }
 
-    // Withdraw tokens after voting
-    function withdrawTokensAfterVoting() public {
-        require(_lockedBalances[msg.sender] > 0, "No tokens to withdraw");
-        uint256 amount = _lockedBalances[msg.sender];
-        _lockedBalances[msg.sender] = 0;
-
-        require(IERC20(token_).transfer(msg.sender, amount), "Token transfer failed");
-    }
 
     function castVote(uint256 proposalId, uint8 support) public override returns (uint256) {
         require(IERC20(token_).transferFrom(msg.sender, address(this), 5e18), "Token transfer failed");
-        _lockedBalances[msg.sender] += 5e18;
-        _lastLocked[msg.sender] = block.number;
+        
+        voteLockedBalances[msg.sender] += 5e18;
+        voteLastLocked[msg.sender] = block.number;
 
         // Call the original castVote function
         return super.castVote(proposalId, support);
     }
 
-    function withdraw() public {
-        uint256 lockedAmount = _lockedBalances[msg.sender];
+    function withdrawVoteLocked() public {
+        uint256 lockedAmount = voteLockedBalances[msg.sender];
         require(lockedAmount > 0, "No tokens to withdraw");
 
         // Check if at least a week has passed
-        uint256 lockDuration = block.number - _lastLocked[msg.sender];
+        uint256 lockDuration = block.number - voteLastLocked[msg.sender];
         // Approximate number of blocks in a week
         require(lockDuration >= 50400, "Tokens are still locked");
 
         // Transfer the locked tokens back to the user
         require(IERC20(token_).transfer(msg.sender, lockedAmount), "Token transfer failed");
         // Reset locked balance and last locked block
-        _lockedBalances[msg.sender] = 0;
-        _lastLocked[msg.sender] = 0;
+        voteLockedBalances[msg.sender] = 0;
+        voteLastLocked[msg.sender] = 0;
+    }
+
+    function withdrawProposalLocked() public {
+        uint256 lockedAmount = proposalLockedBalances[msg.sender];
+        require(lockedAmount > 0, "No tokens to withdraw");
+
+        // Check if at least a week has passed
+        uint256 lockDuration = block.number - proposalLastLocked[msg.sender];
+        // Approximate number of blocks in a week
+        require(lockDuration >= 50400, "Tokens are still locked");
+
+        // Transfer the locked tokens back to the user
+        require(IERC20(token_).transfer(msg.sender, lockedAmount), "Token transfer failed");
+        // Reset locked balance and last locked block
+        proposalLockedBalances[msg.sender] = 0;
+        proposalLastLocked[msg.sender] = 0;
     }
 
 
