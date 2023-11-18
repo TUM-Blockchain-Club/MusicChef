@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.page {
+    margin: 20px;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+.leaderboard .entry {
+    margin-bottom: 10px;
+}
+
+.leaderboard .rank, .leaderboard .title, .leaderboard .artist, .leaderboard .duration, .leaderboard .votes {
+    margin-right: 10px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
