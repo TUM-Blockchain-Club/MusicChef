@@ -6,21 +6,21 @@ import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
-contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction, GovernorTimelockControl {
-    constructor(IVotes _token, TimelockController _timelock)
+contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction {
+    constructor(IVotes _token)
         Governor("DAO")
-        GovernorSettings(7200 /* 1 day */, 50400 /* 1 week */, 0)
+        GovernorSettings(0 /* 0 day */, 50400 /* 1 week */, 0)
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(0)
-        GovernorTimelockControl(_timelock)
     {}
 
     // There needs to be minimum 100 upvotes for a proposal to be accepted --> Music NFT gets created
-    function quorum(uint256 blockNumber) public pure override returns (uint256) {
+
+    function quorum(uint256 blockNumber) public pure override(Governor, GovernorVotesQuorumFraction) returns (uint256) {
         return 100e18;
     }
+
 
     // The following functions are overrides required by Solidity.
 
@@ -42,19 +42,10 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
         return super.votingPeriod();
     }
 
-    function quorum(uint256 blockNumber)
-        public
-        view
-        override(Governor, GovernorVotesQuorumFraction)
-        returns (uint256)
-    {
-        return super.quorum(blockNumber);
-    }
-
     function state(uint256 proposalId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (ProposalState)
     {
         return super.state(proposalId);
@@ -63,7 +54,7 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
     function proposalNeedsQueuing(uint256 proposalId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (bool)
     {
         return super.proposalNeedsQueuing(proposalId);
@@ -80,7 +71,7 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
 
     function _queueOperations(uint256 proposalId, address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash)
         internal
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (uint48)
     {
         return super._queueOperations(proposalId, targets, values, calldatas, descriptionHash);
@@ -88,14 +79,14 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
 
     function _executeOperations(uint256 proposalId, address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash)
         internal
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
     {
         super._executeOperations(proposalId, targets, values, calldatas, descriptionHash);
     }
 
     function _cancel(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash)
         internal
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (uint256)
     {
         return super._cancel(targets, values, calldatas, descriptionHash);
@@ -104,7 +95,7 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
     function _executor()
         internal
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (address)
     {
         return super._executor();
