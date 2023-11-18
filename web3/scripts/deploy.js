@@ -8,8 +8,12 @@ const hre = require("hardhat");
 
 async function main() {
   
-  const MyToken = await hre.ethers.getContractFactory("Token");
-  const token = await MyToken.deploy(/* constructor arguments if any */);
+  const MyToken = await hre.ethers.deployContract("MyToken", [unlockTime], {
+    value: lockedAmount,
+  });
+
+  const MyToken = await hre.ethers.getContractFactory("MyToken");
+  const token = await MyToken.deploy(10000000, 20);
   await token.deployed();
   console.log(`Token deployed to: ${MyToken.address}`);
 
