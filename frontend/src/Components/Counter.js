@@ -1,13 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function Counter(props) {
+  const [timeLeft, setTimeLeft] = useState("");
+  const dateString = "01.12.2023";
+  const parts = dateString.split(".");
+  const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+  const targetDate = new Date(formattedDate);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const difference = targetDate - now;
+
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        // setTimeLeft(
+        //   `${days} days and ${hours} hours ${minutes} minutes ${seconds} seconds left for voting`
+        // );
+        setTimeLeft({
+          days: days,
+          hours: hours,
+          minutes: minutes,
+          seconds: seconds,
+        });
+      } else {
+        clearInterval(interval);
+        setTimeLeft("Voting has ended.");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [targetDate]);
   return (
     <div class="countdown-container">
+      <div style={{fontSize: "25px"}}>Time for voting left:</div>
       <div class="countdown-timer">
-        <div>{props.timeLeft.days}</div>
-        <div>{props.timeLeft.hours}</div>
-        <div>{props.timeLeft.minutes}</div>
-        <div>{props.timeLeft.seconds}</div>
+        <div>{timeLeft.days}</div>
+        <div>{timeLeft.hours}</div>
+        <div>{timeLeft.minutes}</div>
+        <div>{timeLeft.seconds}</div>
       </div>
       <div class="countdown-labels">
         <div>Days</div>

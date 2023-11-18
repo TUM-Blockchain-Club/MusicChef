@@ -49,7 +49,8 @@
 .btn {
   background-color: #654989;
   border-radius: 15em;
-  padding: 1em;
+  padding: 1%;
+  margin: 0.5%;
 }
 
 .btn:hover {
@@ -57,7 +58,13 @@
 }
 
 .mainContainer {
-  min-height: 100%;
+  /* align-items: center;
+  align-content: center;
+  justify-content: center;
+  justify-items: center; */
+  display: flex;
+  flex-direction: column;
+  /* min-height: 100%; */
   min-height: 100vh;
 }
 
@@ -71,6 +78,14 @@ body {
   color: white;
   text-align: center;
   font-family: firaSans, sans-serif;
+}
+
+.leaderboard {
+  align-items: center;
+  align-content: center;
+  justify-items: center;
+  justify-content: center;
+  display: flex;
 }
 
 .walletBtnContainer {
@@ -95,18 +110,23 @@ body {
 
 /* Position and sizing of burger button */
 .bm-burger-button {
+  /* padding: 1.5%; */
+
   position: fixed;
   width: 36px;
   height: 30px;
   left: 36px;
   top: 36px;
+  margin: 1%;
 }
 
 /* Color/shape of burger icon bars */
 .bm-burger-bars {
   background: #654989;
-;
 }
+
+/* #654989 */
+/* #cd31ff */
 
 /* Color/shape of burger icon bars on hover*/
 .bm-burger-bars-hover {
@@ -162,6 +182,7 @@ Note: Beware of modifying this element as it can break the animations - you shou
 }
 
 .countdown-container {
+  margin: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -208,8 +229,66 @@ Note: Beware of modifying this element as it can break the animations - you shou
   /* position: fixed; */
 }
 
-.clubFooterLogo{
+.clubFooterLogo {
   padding: 1%;
   max-height: 5%;
   max-width: 10%;
+}
+
+.uploadContainer {
+  background-color: #61dafb;
+  align-content: center;
+}
+
+.uploadImageContainer {
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  display: flex;
+  width: 64px;
+  height: 64px;
+  background-size: cover;
+  background-image: url("../public/uploadImageDefault.png");
+  transition: background-image 0.3s ease;
+}
+
+.uploadImageContainer:hover {
+  background-image: url("../public/uploadImageHover.png");
+}
+
+.playSongIcon {
+  display: inline-block;
+  width: 25px; /* Specify a width */
+  height: 25px; /* Specify a height */
+  background-image: url("../public/playSongIcon.png"); /* Adjust the path as needed */
+  background-size: cover; /* Ensure the image covers the span */
+}
+
+.playSongIcon:hover {
+  background-image: url("../public/playSongHover.png"); /* Adjust the path as needed */
+}
+
+.voteIcon {
+  display: inline-block;
+  width: 25px; /* Specify a width */
+  height: 25px; /* Specify a height */
+  background-image: url("../public/voteIcon.png"); /* Adjust the path as needed */
+  background-size: cover; /* Ensure the image covers the span */
+}
+
+@keyframes moveUp {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+
+.voteIcon:hover {
+  animation: moveUp 1s ease-in-out infinite;
 }

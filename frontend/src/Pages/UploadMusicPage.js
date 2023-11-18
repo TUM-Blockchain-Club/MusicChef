@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function RatingsPage() {
+export default function UploadMusicPage() {
   return (
-    <div>
-      
+    <div className="uploadImageContainer">
+      {/* <img className="" src={`${process.env.PUBLIC_URL}/uploadCloud.png`} /> */}
     </div>
-  )
+  );
 }
