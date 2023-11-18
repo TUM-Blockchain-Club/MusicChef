@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Core } from "@walletconnect/core";
 import { Web3Wallet, Web3WalletTypes } from "@walletconnect/web3wallet";
-import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
-import Counter from "../Components/Counter";
 import mockRating from "../mockData";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 
