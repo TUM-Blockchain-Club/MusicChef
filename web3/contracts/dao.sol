@@ -17,6 +17,11 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
         GovernorTimelockControl(_timelock)
     {}
 
+    // There needs to be minimum 100 upvotes for a proposal to be accepted --> Music NFT gets created
+    function quorum(uint256 blockNumber) public pure override returns (uint256) {
+        return 100e18;
+    }
+
     // The following functions are overrides required by Solidity.
 
     function votingDelay()
