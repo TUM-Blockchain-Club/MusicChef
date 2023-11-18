@@ -1,7 +1,6 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./Pages/HomePage";
-import UploadMusicPage from "./Pages/UploadMusicPage";
 import NavBar from "./Components/NavBar";
 
 import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
@@ -14,12 +13,14 @@ import {
   bsc,
   fantom,
   gnosis,
+  gnosisChiado,
   mainnet,
   optimism,
   polygon,
 } from "wagmi/chains";
 import Counter from "./Components/Counter";
 import IPFS from "./Pages/IPFS";
+import { Web3ModalProvider } from "./Components/Web3ModalProvider";
 
 const chains = [
   mainnet,
@@ -29,6 +30,7 @@ const chains = [
   bsc,
   optimism,
   gnosis,
+  gnosisChiado,
   fantom,
 ];
 
@@ -48,6 +50,7 @@ const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
 createWeb3Modal({ wagmiConfig, projectId, chains });
 
+
 function App() {
   return (
     <div className="App">
@@ -57,10 +60,12 @@ function App() {
           <NavBar />
           <Counter />
           <WagmiConfig config={wagmiConfig}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/upload" element={<IPFS />} />
-            </Routes>
+            <Web3ModalProvider>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/upload" element={<IPFS />} />
+              </Routes>
+            </Web3ModalProvider>
           </WagmiConfig>
         </Router>
       </div>
