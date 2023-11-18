@@ -10,16 +10,21 @@ import {Nonces} from "@openzeppelin/contracts/utils/Nonces.sol";
 
 
 contract MyToken is ERC20, ERC20Permit, ERC20Votes {
-        
-    constructor(uint256 cap,
-                uint256 airdrop
-    ) ERC20("MusicChef", "MC") ERC20Capped(cap * (10 ** decimals())) ERC20Permit("MusicChef") {
-        
+    mapping(address => bool) public hasMintedAirdrop;
+
+    constructor(uint256 cap, uint256 airdrop) ERC20("MusicChef", "MC") ERC20Capped(cap * (10 ** decimals())) ERC20Permit("MusicChef") {
         // Mint the airdrop for the contract deployer
         _mint(msg.sender, airdrop * (10 ** decimals()));
     }
 
-    
+    // Mint the airdrop for the caller if they haven't already minted it
+    function mintAirdrop() external {
+        require(!hasMintedAirdrop[msg.sender], "Airdrop already minted for this address");
+        
+        _mint(msg.sender, airdrop * (10 ** decimals()));
+        hasMintedAirdrop[msg.sender] = true;
+    }
+
     // The functions below are overrides required by Solidity.
 
     function _update(address from, address to, uint256 amount) internal override(ERC20, ERC20Votes) {
