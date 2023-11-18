@@ -19,6 +19,7 @@ import {
   polygon,
 } from "wagmi/chains";
 import Counter from "./Components/Counter";
+import IPFS from "./Pages/IPFS";
 
 const chains = [
   mainnet,
@@ -58,7 +59,7 @@ function App() {
           <WagmiConfig config={wagmiConfig}>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/upload" element={<UploadMusicPage />} />
+              <Route path="/upload" element={<IPFS />} />
             </Routes>
           </WagmiConfig>
         </Router>
