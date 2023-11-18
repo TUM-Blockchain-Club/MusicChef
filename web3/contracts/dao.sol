@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./musicNFTs.sol";
 
 
 contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes, GovernorVotesQuorumFraction {
@@ -15,6 +17,10 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
 
     mapping(address => uint256) private proposalLockedBalances;
     mapping(address => uint256) private proposalLastLocked;
+
+    mapping(uint256 => address[]) private votersPerProposal;
+
+    MusicToken private _musicTokenContract;
 
     address public token_;
     
@@ -56,6 +62,9 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
         voteLockedBalances[msg.sender] += 5e18;
         voteLastLocked[msg.sender] = block.number;
 
+        // Record the voter's address
+        votersPerProposal[proposalId].push(msg.sender);
+
         // Call the original castVote function
         return super.castVote(proposalId, support);
     }
@@ -90,6 +99,35 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
         // Reset locked balance and last locked block
         proposalLockedBalances[msg.sender] = 0;
         proposalLastLocked[msg.sender] = 0;
+    }
+
+    function createMusicToken(uint256 proposalId, string memory tokenURI) public {
+        require(state(proposalId) == ProposalState.Succeeded, "Proposal not successful");
+
+        // Mint a new music token
+        uint256 tokenId = _musicTokenContract.createToken(tokenURI);
+
+        // Define ownership percentages
+        uint256 totalSupply = 1000000e18; // Represents 100%
+        uint256 creatorShare = (totalSupply * 75) / 100;
+        uint256 voterShare = (totalSupply * 20) / 100;
+        uint256 daoShare = totalSupply - creatorShare - voterShare;
+
+        // Distribute the shares
+        address proposalCreator = proposalProposer(proposalId);/* Retrieve the proposal creator address */
+        _musicTokenContract.mint(proposalCreator, tokenId, creatorShare, "");
+        _musicTokenContract.mint(address(this), tokenId, daoShare, "");
+
+        // Distribute to voters (simplified; needs to be adjusted based on actual logic)
+        address[] memory voters = getVotersForProposal(proposalId);
+        for (uint i = 0; i < voters.length; i++) {
+            _musicTokenContract.mint(voters[i], tokenId, voterShare / voters.length, "");
+        }
+    }
+
+
+    function getVotersForProposal(uint256 proposalId) public view returns (address[] memory) {
+        return votersPerProposal[proposalId];
     }
 
 
