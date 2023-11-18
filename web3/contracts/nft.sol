@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MyToken is ERC721, ERC721Burnable, Ownable {
+contract MyNFT is ERC721, ERC721Burnable, Ownable {
     constructor(address initialOwner)
         ERC721("Musik", "MTK")
         Ownable(initialOwner)
