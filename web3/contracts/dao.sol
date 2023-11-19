@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
@@ -18,6 +17,7 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
     mapping(address => uint256) private proposalLockedBalances;
     mapping(address => uint256) private proposalLastLocked;
 
+    uint256[] private proposalIds;
     mapping(uint256 => address[]) private votersPerProposal;
 
     MusicToken private _musicTokenContract;
@@ -26,7 +26,7 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
     
     constructor(IVotes _token)
         Governor("DAO")
-        GovernorSettings(0 /* 0 day */, 50400 /* 1 week */, 0)
+        GovernorSettings(0 /* 0 day */, 4 /* 1 week */, 0)
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(0)
     {
@@ -36,7 +36,7 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
     // There needs to be minimum 100 upvotes for a proposal to be accepted --> Music NFT gets created
 
     function quorum(uint256 blockNumber) public pure override(Governor, GovernorVotesQuorumFraction) returns (uint256) {
-        return 100e18;
+        return 2e18;
     }
 
     function propose(
@@ -51,8 +51,9 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
         proposalLockedBalances[msg.sender] += 5e18;
         proposalLastLocked[msg.sender] = block.number;
 
-
-        return super.propose(targets, values, calldatas, description);
+        uint256 proposalId = super.propose(targets, values, calldatas, description);
+        proposalIds.push(proposalId);
+        return proposalId;
     }
 
 
@@ -125,9 +126,17 @@ contract DAO is Governor, GovernorSettings, GovernorCountingSimple, GovernorVote
         }
     }
 
-
     function getVotersForProposal(uint256 proposalId) public view returns (address[] memory) {
         return votersPerProposal[proposalId];
+    }
+
+
+    function getNumberOfVotersForProposal(uint256 proposalId) public view returns (uint256) {
+        return votersPerProposal[proposalId].length;
+    }
+
+    function getAllProposalIds() public view returns (uint256[] memory) {
+        return proposalIds;
     }
 
 
