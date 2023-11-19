@@ -24,6 +24,9 @@ const IPFS = () => {
   const [loading, setLoading] = useState(false);
   const { address, isConnecting, isDisconnected } = useAccount();
 
+// DAO address: "0x991b9e8614ce3F0321CECc4B8bBe281922dA1744"
+// Token address: "0x991b9e8614ce3F0321CECc4B8bBe281922dA1744"
+// MusicNFT: "0x88bFeAF0B4E6CbA01e6C8FCdbB9DeDF973692342"
 
   let args = [
     ["0x890bb55136B71898357716b2Eb13c6eCFeda04E5"], // targets
@@ -32,7 +35,7 @@ const IPFS = () => {
     "proposal details" // description
   ];
 
-  const { config } = usePrepareContractWrite({
+  const { config: proposeConfig } = usePrepareContractWrite({
     address: '0x5fbc7f852043f283992246b0ef1d355b1ab1d6ec',
     abi: DAO.output.abi,
     functionName: 'propose',
@@ -40,7 +43,17 @@ const IPFS = () => {
     args: args,
   });
 
-  const {write}= useContractWrite(config)
+  const { config: approveConfig } = usePrepareContractWrite({
+    address: '0x5fbc7f852043f283992246b0ef1d355b1ab1d6ec',
+    abi: DAO.output.abi,
+    functionName: 'approve',
+    from: address,
+    args: ["0x991b9e8614ce3F0321CECc4B8bBe281922dA1744", 100000],
+  });
+
+  const {write: approveWrite}= useContractWrite(approveConfig)
+  const {write: proposeWrite}= useContractWrite(proposeConfig)
+
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -91,7 +104,7 @@ const IPFS = () => {
     const uri = "https://ipfs.io/ipfs/" + cid;
     args[3] = uri;
     try {
-     await write({
+     await proposeWrite({
       args: args
      });
     } catch (error) {
@@ -108,7 +121,7 @@ const IPFS = () => {
         marginTop: "20px",
       }}
     >
-      <button onClick={() => write()}>Feed</button>
+      <button onClick={() => approveWrite()}>Approve allowance</button>
       <input
         type="file"
         onChange={handleFileChange}
