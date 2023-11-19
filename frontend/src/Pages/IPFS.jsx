@@ -10,7 +10,16 @@ import {
   usePrepareContractWrite,
 } from "wagmi";
 import { useWeb3Modal } from "../Components/Web3ModalProvider";
-import ensRegistryABI from "../DAO_metadata.json";
+import DAO from "../DAO_metadata.json";
+import MyToken from "../MyToken.json";
+
+// import Web3 from "web3";
+
+// const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'));
+
+// const number = 100; // Your number here
+// const calldatas = [web3.utils.numberToHex(number)];
+
 // Paste your NFT.Storage API key into the quotes:
 const NFT_STORAGE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQyMzdlYTc3NzQ1MEM2NGFGMDdEZDQwODI4QTY0ZTgwN2FCODU2NmIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTcwMDMyNDAyMDI5MSwibmFtZSI6Ik11c2ljQ2hlZiJ9.2DO7fLSDQLO61Vkd-b8eqqrpnFHz27l16VHe0ssnfmM";
@@ -25,17 +34,13 @@ const IPFS = () => {
   const { web3Modal } = useWeb3Modal();
   const { walletClient: walletClient } = useWalletClient();
 
-  // const contract = useContract({
-  //   address: '0xecb504d39723b0be0e3a9aa33d646642d1051ee1',
-  //   abi: ensRegistryABI,
-  //   walletClient,
-  // })
-  // const { data } = useContractRead({
-  //   address: '0xecb504d39723b0be0e3a9aa33d646642d1051ee1',
-  //   abi: ensRegistryABI,
-  //   functionName: 'getHunger',
-  // })
-  // const calldatas = ['hello', 'world'].map(data => ethers.utils.formatBytes32String(data));
+
+  let args = [
+    ["0x890bb55136B71898357716b2Eb13c6eCFeda04E5"], // targets
+    [0], // values
+    ["0xa9059cbb0000000000000000000000003f5047bdb647dc39c88625e17bdbffee905a9f4400000000000000000000000000000000000000000000011c9a62d04ed0c80000"], // calldatas
+    "proposal details" // description
+  ];
 
   const { config } = usePrepareContractWrite({
     address: "0xc9b712f32a2b079edf75ead858ef04af7e7f9d38",
@@ -69,9 +74,7 @@ const IPFS = () => {
     // asyncFunction();
   });
 
-  // , () => {
-  // sendToContract(storedNFT.ipnft);
-  // }
+  const {write}= useContractWrite(config)
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -99,7 +102,14 @@ const IPFS = () => {
         name,
         description,
       });
+
       setUploadResult(storedNFT);
+
+      // Call sendToContract function with the CID of the uploaded NFT
+      if (storedNFT && storedNFT.ipnft) {
+        await sendToContract(storedNFT.ipnft);
+      }
+
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload NFT.");
@@ -109,34 +119,15 @@ const IPFS = () => {
   };
 
   const sendToContract = async (cid) => {
-    const web3Provider = await web3Modal.connect();
-    const provider = new ethers.BrowserProvider(web3Provider);
-    console.log("provider: ", provider);
-    console.log("web3Provider: ", web3Provider);
 
-    const signer = provider.getSigner();
 
     // CONTRACT ADDRESS
-    const contractAddress = "0x69de373d17189b1ccfce499488422a5095ae0f0d";
-    const contractABI = ABI.output.abi;
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
-    const to = address;
     const uri = "https://ipfs.io/ipfs/" + cid;
-
+    args[3] = uri;
     try {
-      const transferCalldata = contract.interface.encodeFunctionData(
-        "safeMint",
-        [to, uri]
-      );
-      const tx = await contract.propose(
-        // TOKEN ADDRESS
-        ["0x8a96d0c8576a2b8f0855f1a8b3c3063ca0830889"],
-        [0],
-        [],
-        ""
-      );
-      await tx.wait();
-      console.log(`Transaction successful with hash: ${tx.hash}`);
+     await write({
+      args: args
+     });
     } catch (error) {
       console.error("Error making proposal:", error);
     }
