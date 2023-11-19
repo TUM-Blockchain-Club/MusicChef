@@ -114,6 +114,10 @@ export default function HomePage(props) {
     });
   };
 
+  const handleClick = () => {
+    console.log("Buton clicked");
+  };
+
   const topRating = mockRating.map((el, index) => (
     <tr class="entry" key={index}>
       <td class="rank">{index + 1}</td>
@@ -125,7 +129,8 @@ export default function HomePage(props) {
         <span className="playSongIcon" />
       </td>
       <td class="vote-button-cell">
-        <span className="voteIcon" />
+      <span className="voteIcon" onClick={() => handleClick()}>→</span>
+
       </td>
       <Counter endDate={el.endDate}/>
     </tr>

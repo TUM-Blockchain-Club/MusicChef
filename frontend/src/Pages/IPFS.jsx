@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { NFTStorage, File } from "nft.storage";
-import { ethers } from "ethers";
-import ABI from "../DAO_metadata.json";
-import {
-  useAccount,
-  useWalletClient,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-} from "wagmi";
+import { NFTStorage, File, Token } from "nft.storage";
+import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { useWeb3Modal } from "../Components/Web3ModalProvider";
 import DAO from "../DAO_metadata.json";
 import MyToken from "../MyToken.json";
@@ -31,8 +23,6 @@ const IPFS = () => {
   const [uploadResult, setUploadResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const { address, isConnecting, isDisconnected } = useAccount();
-  const { web3Modal } = useWeb3Modal();
-  const { walletClient: walletClient } = useWalletClient();
 
 
   let args = [
@@ -43,35 +33,11 @@ const IPFS = () => {
   ];
 
   const { config } = usePrepareContractWrite({
-    address: "0xc9b712f32a2b079edf75ead858ef04af7e7f9d38",
-    abi: ensRegistryABI,
-    functionName: "propose",
-    from: "0x890bb55136B71898357716b2Eb13c6eCFeda04E5",
-    args: [
-      ["0x890bb55136B71898357716b2Eb13c6eCFeda04E5"],
-      0,
-      ,
-      "This is a test proposal",
-    ],
-  });
-
-  // const {config} = usePrepareContractWrite({
-  //     address: '0x2f195b81b588f0274e3b67b5ba86fee240b3b3b1',
-  //     abi: ensRegistryABI.output.abi,
-  //     functionName: 'updateMessage',
-  //     from: "0x890bb55136B71898357716b2Eb13c6eCFeda04E5",
-  //     args: ["T"],
-  //   })
-
-  const results = useContractWrite(config);
-
-  useEffect(() => {
-    // const asyncFunction = async () => {
-    //   if (uploadResult) {
-    //     await sendToContract(uploadResult.ipnft);
-    //   }
-    // };
-    // asyncFunction();
+    address: '0x5fbc7f852043f283992246b0ef1d355b1ab1d6ec',
+    abi: DAO.output.abi,
+    functionName: 'propose',
+    from: address,
+    args: args,
   });
 
   const {write}= useContractWrite(config)
@@ -142,7 +108,7 @@ const IPFS = () => {
         marginTop: "20px",
       }}
     >
-      <button onClick={() => results.write()}>Feed</button>
+      <button onClick={() => write()}>Feed</button>
       <input
         type="file"
         onChange={handleFileChange}
