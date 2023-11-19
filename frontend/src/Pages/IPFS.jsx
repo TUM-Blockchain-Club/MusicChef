@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { NFTStorage, File } from "nft.storage";
 import { ethers } from "ethers";
 import ABI from "../DAO_metadata.json";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient, useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { useWeb3Modal } from "../Components/Web3ModalProvider";
+import ensRegistryABI from "../DAO_metadata.json";
 // Paste your NFT.Storage API key into the quotes:
 const NFT_STORAGE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQyMzdlYTc3NzQ1MEM2NGFGMDdEZDQwODI4QTY0ZTgwN2FCODU2NmIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTcwMDMyNDAyMDI5MSwibmFtZSI6Ik11c2ljQ2hlZiJ9.2DO7fLSDQLO61Vkd-b8eqqrpnFHz27l16VHe0ssnfmM";
@@ -16,16 +17,47 @@ const IPFS = () => {
   const [loading, setLoading] = useState(false);
   const { address, isConnecting, isDisconnected } = useAccount();
   const { web3Modal } = useWeb3Modal();
+  const { walletClient: walletClient } = useWalletClient()
+
+  // const contract = useContract({
+  //   address: '0xecb504d39723b0be0e3a9aa33d646642d1051ee1',
+  //   abi: ensRegistryABI,
+  //   walletClient,
+  // })
+  // const { data } = useContractRead({
+  //   address: '0xecb504d39723b0be0e3a9aa33d646642d1051ee1',
+  //   abi: ensRegistryABI,
+  //   functionName: 'getHunger',
+  // })
+  // const calldatas = ['hello', 'world'].map(data => ethers.utils.formatBytes32String(data));
+
+  const { config } = usePrepareContractWrite({
+    address: '0xc9b712f32a2b079edf75ead858ef04af7e7f9d38',
+    abi: ensRegistryABI,
+    functionName: 'propose',
+    from: "0x890bb55136B71898357716b2Eb13c6eCFeda04E5",
+    args: [["0x890bb55136B71898357716b2Eb13c6eCFeda04E5"],0,,"This is a test proposal"],
+  })
+
+// const {config} = usePrepareContractWrite({
+//     address: '0x2f195b81b588f0274e3b67b5ba86fee240b3b3b1',
+//     abi: ensRegistryABI.output.abi,
+//     functionName: 'updateMessage',
+//     from: "0x890bb55136B71898357716b2Eb13c6eCFeda04E5",
+//     args: ["T"],
+//   })
+
+  const { write } = useContractWrite(config)
 
   useEffect(() => {
-    const asyncFunction = async () => {
-      if (uploadResult) {
-        await sendToContract(uploadResult.ipnft);
-      }
-    };
+    // const asyncFunction = async () => {
+    //   if (uploadResult) {
+    //     await sendToContract(uploadResult.ipnft);
+    //   }
+    // };
 
-    asyncFunction();
-  }, [uploadResult]);
+    // asyncFunction();
+  });
 
   // , () => {
   // sendToContract(storedNFT.ipnft);
@@ -109,6 +141,7 @@ const IPFS = () => {
         marginTop: "20px",
       }}
     >
+    <button onClick={() => write()}>Feed</button>
       <input
         type="file"
         onChange={handleFileChange}
