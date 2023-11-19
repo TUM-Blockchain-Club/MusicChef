@@ -3,7 +3,7 @@ import { NFTStorage, File, Token } from "nft.storage";
 import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { useWeb3Modal } from "../Components/Web3ModalProvider";
 import DAO from "../DAO_metadata.json";
-import MyToken from "../MyToken.json";
+import MyToken from "../MyToken_metadata.json"
 
 // import Web3 from "web3";
 
@@ -46,9 +46,10 @@ const IPFS = () => {
     args: args,
   });
 
+  console.log("Address: ", address);
   const { config: approveConfig } = usePrepareContractWrite({
     address: '0x46a9ca28133e93923cbc9efb9846534aaeaf15d0',
-    abi: DAO.output.abi,
+    abi: MyToken.output.abi,
     functionName: 'approve',
     from: address,
     args: ["0x69de373d17189b1ccfce499488422a5095ae0f0d", 100000],
@@ -107,9 +108,7 @@ const IPFS = () => {
     const uri = "https://ipfs.io/ipfs/" + cid;
     args[3] = uri;
     try {
-     await proposeWrite({
-      args: args
-     });
+     await proposeWrite();
     } catch (error) {
       console.error("Error making proposal:", error);
     }

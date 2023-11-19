@@ -9,7 +9,7 @@ import {
   useContractWrite,
   usePrepareContractWrite,
 } from "wagmi";
-import myTokenAbi from "../MyToken_metadata.json";
+import MyToken from "../MyToken.json";
 import Counter from "../Components/Counter";
 
 // const { address } = useAccount();
@@ -20,8 +20,8 @@ export default function HomePage(props) {
   const { open } = useWeb3Modal();
 
   const { config: mintAirdropConfig } = usePrepareContractWrite({
-    address: "0x3bcab43f601f120c3fba8ac369084247418fa0d1",
-    abi: myTokenAbi.output.abi,
+    address: "0x46a9ca28133e93923cbc9efb9846534aaeaf15d0",
+    abi: MyToken.output.abi,
     functionName: "mintAirdrop",
     from: address,
     args: [],
@@ -69,16 +69,16 @@ export default function HomePage(props) {
   //   hasParticipatedConfig
   // );
 
-  const { data, error } = useContractRead({
-    address: "0xc9b712f32a2b079edf75ead858ef04af7e7f9d38",
-    abi: myTokenAbi.output.abi,
-    functionName: "hasMintedAirdrop",
-    args: [address], // the address you want to check
-  });
+  // const { data, error } = useContractRead({
+  //   address: "0xc9b712f32a2b079edf75ead858ef04af7e7f9d38",
+  //   abi: MyToken.output.abi,
+  //   functionName: "hasMintedAirdrop",
+  //   args: [address], // the address you want to check
+  // });
 
-  useEffect(() => {
-    console.log("data: ", data);
-  });
+  // useEffect(() => {
+  //   console.log("data: ", data);
+  // });
   // useEffect(() => {
   //   const airdropped = async () => {
   //     if (typeof hasParticipatedWrite === "function") {

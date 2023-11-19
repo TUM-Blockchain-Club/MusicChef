@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import {
   arbitrum,
   avalanche,
+  base,
+  baseGoerli,
   bsc,
   fantom,
   gnosis,
@@ -32,6 +34,8 @@ const chains = [
   gnosis,
   gnosisChiado,
   fantom,
+  base,
+  baseGoerli
 ];
 
 // 1. Get projectID at https://cloud.walletconnect.com
