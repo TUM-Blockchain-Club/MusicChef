@@ -151,7 +151,7 @@ export default function HomePage(props) {
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainId: "0x64", // Chain ID must be in hexadecimal numbers
+                chainId: "0x1", // Chain ID must be in hexadecimal numbers
                 chainName: "MEV Blocker (Ethereum Mainnet)",
                 nativeCurrency: {
                   name: "Ether",
