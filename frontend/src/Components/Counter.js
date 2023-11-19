@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 export default function Counter(props) {
   const [timeLeft, setTimeLeft] = useState("");
-  const dateString = "01.12.2023";
+  const dateString = props.endDate;
   const parts = dateString.split(".");
   const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
   const targetDate = new Date(formattedDate);
@@ -41,7 +41,7 @@ export default function Counter(props) {
   }, [targetDate]);
   return (
     <div class="countdown-container">
-      <div style={{fontSize: "25px"}}>Time for voting left:</div>
+      {/* <div >Time for voting left:</div> */}
       <div class="countdown-timer">
         <div>{timeLeft.days}</div>
         <div>{timeLeft.hours}</div>

@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { NFTStorage, File } from "nft.storage";
 import { ethers } from "ethers";
 import ABI from "../DAO_metadata.json";
-import { useAccount, useWalletClient, useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
+import {
+  useAccount,
+  useWalletClient,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+} from "wagmi";
 import { useWeb3Modal } from "../Components/Web3ModalProvider";
 import ensRegistryABI from "../DAO_metadata.json";
 // Paste your NFT.Storage API key into the quotes:
@@ -17,7 +23,7 @@ const IPFS = () => {
   const [loading, setLoading] = useState(false);
   const { address, isConnecting, isDisconnected } = useAccount();
   const { web3Modal } = useWeb3Modal();
-  const { walletClient: walletClient } = useWalletClient()
+  const { walletClient: walletClient } = useWalletClient();
 
   // const contract = useContract({
   //   address: '0xecb504d39723b0be0e3a9aa33d646642d1051ee1',
@@ -32,22 +38,27 @@ const IPFS = () => {
   // const calldatas = ['hello', 'world'].map(data => ethers.utils.formatBytes32String(data));
 
   const { config } = usePrepareContractWrite({
-    address: '0xc9b712f32a2b079edf75ead858ef04af7e7f9d38',
+    address: "0xc9b712f32a2b079edf75ead858ef04af7e7f9d38",
     abi: ensRegistryABI,
-    functionName: 'propose',
+    functionName: "propose",
     from: "0x890bb55136B71898357716b2Eb13c6eCFeda04E5",
-    args: [["0x890bb55136B71898357716b2Eb13c6eCFeda04E5"],0,,"This is a test proposal"],
-  })
+    args: [
+      ["0x890bb55136B71898357716b2Eb13c6eCFeda04E5"],
+      0,
+      ,
+      "This is a test proposal",
+    ],
+  });
 
-// const {config} = usePrepareContractWrite({
-//     address: '0x2f195b81b588f0274e3b67b5ba86fee240b3b3b1',
-//     abi: ensRegistryABI.output.abi,
-//     functionName: 'updateMessage',
-//     from: "0x890bb55136B71898357716b2Eb13c6eCFeda04E5",
-//     args: ["T"],
-//   })
+  // const {config} = usePrepareContractWrite({
+  //     address: '0x2f195b81b588f0274e3b67b5ba86fee240b3b3b1',
+  //     abi: ensRegistryABI.output.abi,
+  //     functionName: 'updateMessage',
+  //     from: "0x890bb55136B71898357716b2Eb13c6eCFeda04E5",
+  //     args: ["T"],
+  //   })
 
-  const { write } = useContractWrite(config)
+  const results = useContractWrite(config);
 
   useEffect(() => {
     // const asyncFunction = async () => {
@@ -55,7 +66,6 @@ const IPFS = () => {
     //     await sendToContract(uploadResult.ipnft);
     //   }
     // };
-
     // asyncFunction();
   });
 
@@ -141,7 +151,7 @@ const IPFS = () => {
         marginTop: "20px",
       }}
     >
-    <button onClick={() => write()}>Feed</button>
+      <button onClick={() => results.write()}>Feed</button>
       <input
         type="file"
         onChange={handleFileChange}

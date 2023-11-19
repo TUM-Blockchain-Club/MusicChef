@@ -58,7 +58,6 @@ function App() {
       <div className="mainContainer">
         <Router>
           <NavBar />
-          <Counter />
           <WagmiConfig config={wagmiConfig}>
             <Web3ModalProvider>
               <Routes>
