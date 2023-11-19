@@ -28,6 +28,9 @@ const IPFS = () => {
 // Token address: "0x991b9e8614ce3F0321CECc4B8bBe281922dA1744"
 // MusicNFT: "0x88bFeAF0B4E6CbA01e6C8FCdbB9DeDF973692342"
 
+// Base token: 0x46a9ca28133e93923cbc9efb9846534aaeaf15d0
+// Base DAO: 0x69de373d17189b1ccfce499488422a5095ae0f0d
+
   let args = [
     ["0x890bb55136B71898357716b2Eb13c6eCFeda04E5"], // targets
     [0], // values
@@ -36,7 +39,7 @@ const IPFS = () => {
   ];
 
   const { config: proposeConfig } = usePrepareContractWrite({
-    address: '0x5fbc7f852043f283992246b0ef1d355b1ab1d6ec',
+    address: '0x69de373d17189b1ccfce499488422a5095ae0f0d',
     abi: DAO.output.abi,
     functionName: 'propose',
     from: address,
@@ -44,11 +47,11 @@ const IPFS = () => {
   });
 
   const { config: approveConfig } = usePrepareContractWrite({
-    address: '0x5fbc7f852043f283992246b0ef1d355b1ab1d6ec',
+    address: '0x46a9ca28133e93923cbc9efb9846534aaeaf15d0',
     abi: DAO.output.abi,
     functionName: 'approve',
     from: address,
-    args: ["0x991b9e8614ce3F0321CECc4B8bBe281922dA1744", 100000],
+    args: ["0x69de373d17189b1ccfce499488422a5095ae0f0d", 100000],
   });
 
   const {write: approveWrite}= useContractWrite(approveConfig)
